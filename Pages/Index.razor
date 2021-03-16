@@ -1,0 +1,72 @@
+﻿@page "/"
+@using System.Linq
+
+<h1>text-to-mobile-keypad-converter</h1>
+
+<div>
+    <span>@KeyPadText</span>
+</div>
+
+<input type="text" @bind-value="@Text" @bind-value:event="oninput" />
+
+@code {
+
+    private string text;
+
+    public string Text {
+        get => text;
+        set => text = SetKeyPadText(value);
+    }
+
+    private string SetKeyPadText(string s)
+    {
+        s ??= "";
+
+        var validInput = new string(s.Where(c => characterTable.ContainsKey(c)).ToArray());
+
+        var encodedParts = validInput.Select(c => characterTable[c]).ToArray();
+
+        KeyPadText = string.Join('-', encodedParts);
+
+        return validInput;
+    }
+
+    public string KeyPadText { get; set; }
+
+
+    private Dictionary<char, string> characterTable = new()
+    {
+        { ' ', "0" },
+        { '.', "00" },
+        { ',', "000" },
+        { '?', "0000" },
+        { '!', "00000" },
+        { 'a', "2" },
+        { 'b', "22" },
+        { 'c', "222" },
+        { 'd', "3" },
+        { 'e', "33" },
+        { 'f', "333" },
+        { 'g', "4" },
+        { 'h', "44" },
+        { 'i', "444" },
+        { 'j', "5" },
+        { 'k', "55" },
+        { 'l', "555" },
+        { 'm', "6" },
+        { 'n', "66" },
+        { 'o', "666" },
+        { 'p', "7" },
+        { 'q', "77" },
+        { 'r', "777" },
+        { 's', "7777" },
+        { 't', "8" },
+        { 'u', "88" },
+        { 'v', "888" },
+        { 'w', "9" },
+        { 'x', "99" },
+        { 'y', "999" },
+        { 'z', "9999" },
+    };
+
+}

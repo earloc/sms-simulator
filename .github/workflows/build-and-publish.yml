@@ -1,0 +1,47 @@
+name: build-and-publish
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-to-benehm-o-meter:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.102
+
+    - name: Change base-href in index.html
+      run: sed -i 's/<base href="\/" \/>/<base href="\/sms-simulator\/" \/>/g' sms-simulator/wwwroot/index.html
+    
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%dT%T%:z')"
+
+    - name: restore
+      run: dotnet restore
+
+    - name: build
+      run: dotnet build -c Release --nologo --no-restore
+
+    - name: test
+      run: dotnet test -c Release --no-build
+      
+    - name: publish
+      run: dotnet publish sms-simulator/sms-simulator.csproj -c Release -o release --nologo  --no-restore --no-build
+    
+    - name: deploy spa
+      uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.SPA_DEPLOY }}
+      with:
+        source_file: 'release/wwwroot/*'
+        destination_repo: 'benehm-o-meter/benehm-o-meter.github.io'
+        destination_folder: 'sms-simulator'
+        destination_branch: 'main'
+        user_email: 'github@benehm-o-meter.de'
+        user_name: 'benehm-o-mator'
