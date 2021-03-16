@@ -16,7 +16,7 @@ jobs:
         dotnet-version: 5.0.102
 
     - name: Change base-href in index.html
-      run: sed -i 's/<base href="\/" \/>/<base href="\/sms-simulator\/" \/>/g' sms-simulator/wwwroot/index.html
+      run: sed -i 's/<base href="\/" \/>/<base href="\/sms-simulator\/" \/>/g' wwwroot/index.html
     
     - name: Get current date
       id: date
@@ -32,7 +32,7 @@ jobs:
       run: dotnet test -c Release --no-build
       
     - name: publish
-      run: dotnet publish sms-simulator/sms-simulator.csproj -c Release -o release --nologo  --no-restore --no-build
+      run: dotnet publish sms-simulator.csproj -c Release -o release --nologo  --no-restore --no-build
     
     - name: deploy spa
       uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
