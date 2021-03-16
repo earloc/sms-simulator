@@ -22,7 +22,7 @@
     {
         s ??= "";
 
-        var validInput = new string(s.Where(c => characterTable.ContainsKey(c)).ToArray());
+        var validInput = new string(s.ToLowerInvariant().Where(c => characterTable.ContainsKey(c)).ToArray());
 
         var encodedParts = validInput.Select(c => characterTable[c]).ToArray();
 
